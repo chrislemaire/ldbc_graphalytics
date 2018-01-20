@@ -117,17 +117,21 @@ public class CustomBenchmark extends Benchmark {
                 }
 
                 BenchmarkJob job = new BenchmarkJob(algorithm, graph, 1, repetition);
-                BenchmarkRun benchmarkRun = contructBenchmarkRun(algorithm, graph);
-                job.addBenchmark(benchmarkRun);
-                benchmarkRuns.add(benchmarkRun);
+
                 jobs.add(job);
                 experiment.addJob(job);
+
+                algorithms.add(algorithm);
+                graphs.add(graph);
             }
         }
 
-        for (BenchmarkRun benchmarkRun : benchmarkRuns) {
-            algorithms.add(benchmarkRun.getAlgorithm());
-            graphs.add(benchmarkRun.getFormattedGraph().getGraph());
+        for (BenchmarkJob benchmarkJob : getJobs()) {
+            for (int i = 0; i < benchmarkJob.getRepetition(); i++) {
+                BenchmarkRun benchmarkRun = contructBenchmarkRun(benchmarkJob.getAlgorithm(), benchmarkJob.getGraph());
+                benchmarkJob.addBenchmark(benchmarkRun);
+                benchmarkRuns.add(benchmarkRun);
+            }
         }
 
     }
