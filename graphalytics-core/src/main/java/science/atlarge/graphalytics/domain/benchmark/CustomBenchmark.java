@@ -44,6 +44,7 @@ public class CustomBenchmark extends Benchmark {
     private static final String BENCHMARK_RUN_TIMEOUT_KEY = "benchmark.custom.timeout";
     private static final String BENCHMARK_RUN_OUTPUT_REQUIRED_KEY = "benchmark.custom.output-required";
     private static final String BENCHMARK_RUN_VALIDATION_REQUIRED_KEY = "benchmark.custom.validation-required";
+    private static final String BENCHMARK_RUN_REPETITION_KEY = "benchmark.custom.repetitions";
 
     public CustomBenchmark(String type, String platformName,
                            Path baseReportDir, Path baseOutputDir, Path baseValidationDir,
@@ -57,6 +58,7 @@ public class CustomBenchmark extends Benchmark {
 
         Configuration benchmarkConfiguration = ConfigurationUtil.loadConfiguration(BENCHMARK_PROPERTIES_FILE);
         this.timeout = ConfigurationUtil.getInteger(benchmarkConfiguration, BENCHMARK_RUN_TIMEOUT_KEY);
+        this.repetition = ConfigurationUtil.getInteger(benchmarkConfiguration, BENCHMARK_RUN_REPETITION_KEY);
 
         this.validationRequired = ConfigurationUtil.getBoolean(benchmarkConfiguration, BENCHMARK_RUN_VALIDATION_REQUIRED_KEY);
         this.outputRequired = ConfigurationUtil.getBoolean(benchmarkConfiguration, BENCHMARK_RUN_OUTPUT_REQUIRED_KEY);
@@ -68,6 +70,11 @@ public class CustomBenchmark extends Benchmark {
             this.validationRequired = false;
         }
 
+        if (this.repetition < 1) {
+            LOG.warn("Number of repetitions is set to " + this.repetition + ". " +
+                    "This is invalid. Defaulting to 1 repetition.");
+            this.repetition = 1;
+        }
     }
 
 
@@ -109,7 +116,7 @@ public class CustomBenchmark extends Benchmark {
                     continue;
                 }
 
-                BenchmarkJob job = new BenchmarkJob(algorithm, graph, 1, 1);
+                BenchmarkJob job = new BenchmarkJob(algorithm, graph, 1, repetition);
                 BenchmarkRun benchmarkRun = contructBenchmarkRun(algorithm, graph);
                 job.addBenchmark(benchmarkRun);
                 benchmarkRuns.add(benchmarkRun);

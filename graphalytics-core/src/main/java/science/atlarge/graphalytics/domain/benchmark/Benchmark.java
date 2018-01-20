@@ -49,6 +49,7 @@ public class Benchmark implements Serializable {
 	protected String type;
 
 	protected int timeout;
+	protected int repetition;
 	protected boolean outputRequired;
 	protected boolean validationRequired;
 
